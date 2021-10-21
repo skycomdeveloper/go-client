@@ -73,7 +73,7 @@ func (api *SmsResource) Text(p SmsTextParams) (res *string, err error) {
 	return api.request(p)
 }
 
-func (api *SmsResource) Json(p SmsBaseParams) (o *SmsResponse, err error) {
+func (api *SmsResource) Json(p SmsBaseParams) (o *SmsResponse, raw *string, err error) {
 	type SmsJsonParams struct {
 		SmsBaseParams
 		Json bool `json:"json,omitempty"`
@@ -85,10 +85,11 @@ func (api *SmsResource) Json(p SmsBaseParams) (o *SmsResponse, err error) {
 	})
 
 	if nil != err {
-		return nil, err
+		return nil, res, err
 	}
 
 	err = json.Unmarshal([]byte(*res), &o)
+	raw = res
 
 	return
 }

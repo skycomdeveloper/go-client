@@ -12,11 +12,17 @@ import (
 	"strings"
 )
 
+type Logger interface {
+	Printf(format string, v ...interface{})
+	Println(v ...interface{})
+}
+
 type HttpMethod string
 type Options struct {
 	ApiKey   string
 	Debug    bool
 	SentWith string
+	Logger   Logger
 }
 type resource struct {
 	client *Sms77API
@@ -88,6 +94,10 @@ var StatusCodes = map[StatusCode]string{
 func New(options Options) *Sms77API {
 	if "" == options.SentWith {
 		options.SentWith = defaultOptionSentWith
+	}
+
+	if options.Logger == nil {
+		options.Logger = log.Default()
 	}
 
 	c := &Sms77API{client: http.DefaultClient}

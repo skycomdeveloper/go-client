@@ -1,8 +1,9 @@
 package sms77api
 
 import (
-	a "github.com/stretchr/testify/assert"
 	"testing"
+
+	a "github.com/stretchr/testify/assert"
 )
 
 func TestBalance(t *testing.T) {
@@ -16,7 +17,9 @@ func TestBalance(t *testing.T) {
 		t.Errorf("Balance() should return a float64 value, but received nil")
 	}
 
-	a.GreaterOrEqual(t, *res, float64(0))
+	if res != nil {
+		a.GreaterOrEqual(t, *res, float64(0))
+	}
 }
 
 func TestBalanceBad(t *testing.T) {
