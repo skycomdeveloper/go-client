@@ -133,7 +133,7 @@ func (api *Sms77API) request(endpoint string, method string, data interface{}) (
 
 		for k, v := range data.(map[string]interface{}) {
 			if api.Debug {
-				log.Printf("%s: %v", k, v)
+				api.Logger.Printf("%s: %v", k, v)
 			}
 
 			switch v.(type) {
@@ -184,13 +184,13 @@ func (api *Sms77API) request(endpoint string, method string, data interface{}) (
 		}
 
 		if api.Debug {
-			log.Printf("%s %s", method, uri)
+			api.Logger.Printf("%s %s", method, uri)
 		}
 
 		req, err = http.NewRequest(method, uri, strings.NewReader(body))
 
 		if nil != err {
-			log.Println(err.Error())
+			api.Logger.Println(err.Error())
 			panic(err)
 		}
 
