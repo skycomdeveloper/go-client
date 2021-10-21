@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -13,8 +12,8 @@ import (
 )
 
 type Logger interface {
-	Printf(format string, v ...interface{})
-	Println(v ...interface{})
+	Debug(format string, v ...interface{})
+	Error(format string, v ...interface{})
 }
 
 type HttpMethod string
@@ -97,7 +96,7 @@ func New(options Options) *Sms77API {
 	}
 
 	if options.Logger == nil {
-		options.Logger = log.Default()
+		options.Logger = NewDefaultLogger()
 	}
 
 	c := &Sms77API{client: http.DefaultClient}
@@ -133,7 +132,7 @@ func (api *Sms77API) request(endpoint string, method string, data interface{}) (
 
 		for k, v := range data.(map[string]interface{}) {
 			if api.Debug {
-				api.Logger.Printf("%s: %v", k, v)
+				api.Logger.Debug("%s: %v", k, v)
 			}
 
 			switch v.(type) {
@@ -184,14 +183,15 @@ func (api *Sms77API) request(endpoint string, method string, data interface{}) (
 		}
 
 		if api.Debug {
-			api.Logger.Printf("%s %s", method, uri)
+			api.Logger.Debug("%s %s", method, uri)
 		}
 
 		req, err = http.NewRequest(method, uri, strings.NewReader(body))
 
 		if nil != err {
-			api.Logger.Println(err.Error())
-			panic(err)
+			api.Logger.Error(err.Error())
+			return nil, err
+			// panic(err) do not panic
 		}
 
 		for k, v := range headers {
@@ -235,7 +235,7 @@ func (api *Sms77API) request(endpoint string, method string, data interface{}) (
 	str := strings.TrimSpace(string(body))
 
 	if api.Debug {
-		log.Println(str)
+		api.Logger.Debug(str)
 	}
 
 	length := len(str)
