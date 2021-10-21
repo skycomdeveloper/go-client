@@ -12,11 +12,17 @@ import (
 	"strings"
 )
 
+type Logger interface {
+	Printf(format string, v ...interface{})
+	Println(v ...interface{})
+}
+
 type HttpMethod string
 type Options struct {
 	ApiKey   string
 	Debug    bool
 	SentWith string
+	Logger   Logger
 }
 type resource struct {
 	client *Sms77API
@@ -90,6 +96,10 @@ func New(options Options) *Sms77API {
 		options.SentWith = defaultOptionSentWith
 	}
 
+	if options.Logger == nil {
+		options.Logger = log.Default()
+	}
+
 	c := &Sms77API{client: http.DefaultClient}
 	c.Options = options
 	c.base.client = c
@@ -123,7 +133,7 @@ func (api *Sms77API) request(endpoint string, method string, data interface{}) (
 
 		for k, v := range data.(map[string]interface{}) {
 			if api.Debug {
-				log.Printf("%s: %v", k, v)
+				api.Logger.Printf("%s: %v", k, v)
 			}
 
 			switch v.(type) {
@@ -174,13 +184,13 @@ func (api *Sms77API) request(endpoint string, method string, data interface{}) (
 		}
 
 		if api.Debug {
-			log.Printf("%s %s", method, uri)
+			api.Logger.Printf("%s %s", method, uri)
 		}
 
 		req, err = http.NewRequest(method, uri, strings.NewReader(body))
 
 		if nil != err {
-			log.Println(err.Error())
+			api.Logger.Println(err.Error())
 			panic(err)
 		}
 

@@ -2,10 +2,11 @@ package sms77api
 
 import (
 	"fmt"
-	a "github.com/stretchr/testify/assert"
 	"strconv"
 	"strings"
 	"testing"
+
+	a "github.com/stretchr/testify/assert"
 )
 
 var testSmsBaseParams = SmsBaseParams{
@@ -102,7 +103,7 @@ func TestSmsResource_Text_With_Id_Detailed(t *testing.T) {
 }
 
 func testJson(t *testing.T, params SmsBaseParams, assertText bool) *SmsResponse {
-	json, err := client.Sms.Json(params)
+	json, _, err := client.Sms.Json(params)
 
 	if nil == err {
 		var debug = params.Debug

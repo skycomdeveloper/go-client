@@ -1,8 +1,9 @@
 package sms77api
 
 import (
-	a "github.com/stretchr/testify/assert"
 	"testing"
+
+	a "github.com/stretchr/testify/assert"
 )
 
 func testStatusAssert(s *Status, t *testing.T) {
@@ -35,7 +36,7 @@ func testStatusGetId() uint64 {
 	var id string
 
 	if 0 == len(journals) {
-		sms, _ := client.Sms.Json(SmsBaseParams{To: VinTelekom, Text: "HI"})
+		sms, _, _ := client.Sms.Json(SmsBaseParams{To: VinTelekom, Text: "HI"})
 		id = *sms.Messages[0].Id
 	} else {
 		id = journals[0].Id
